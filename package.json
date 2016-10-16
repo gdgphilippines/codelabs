@@ -1,0 +1,21 @@
+{
+  "name": "codelabs",
+  "version": "1.0.0",
+  "description": "codelabs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "monitor": "nodemon server.js",
+    "deploy": "gcloud app deploy"
+  },
+  "keywords": [],
+  "author": "Ralph Vincent Regalado and Juvar Abrera",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.11.0",
+    "firebase": "^3.0.7"
+  },
+  "engines": {
+    "node": "~4.2"
+  }
+}
