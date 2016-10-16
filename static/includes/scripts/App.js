@@ -1033,24 +1033,15 @@ var App = {
 	}
 }
 
-function submitScore(uid, username, picture, title, body) {
-  // A post entry.
-  var postData = {
-    author: username,
-    uid: uid,
-    body: body,
-    title: title,
-    starCount: 0,
-    authorPic: picture
-  };
+//TO-DO 
+function submitScore() {
+  
+	//get all score details to submit including userid
 
-  // Get a key for a new Post.
-  var newPostKey = firebase.database().ref().child('posts').push().key;
+	//create a post data 
 
-  // Write the new post's data simultaneously in the posts list and the user's post list.
-  var updates = {};
-  updates['/posts/' + newPostKey] = postData;
-  updates['/user-posts/' + uid + '/' + newPostKey] = postData;
+	//submit post data to server (server.js)
 
-  return firebase.database().ref().update(updates);
+
+
 }

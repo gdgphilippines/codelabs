@@ -9,10 +9,19 @@ app.get('/',function(req,res){
   //__dirname : It will resolve to your project folder.
 });
 
-// This responds a GET request for the /list_user page.
-app.get('/list_user', function (req, res) {
-   console.log("Got a GET request for /list_user");
-   res.send('Page Listing');
+// This responds a POST request for the /submit page.
+// TO DO
+app.post('/submit', function (req, res) {
+   console.log("Got a POST request for /submit");
+
+   //process POST data convert it into JSON for Firebase
+
+   //access Firebase database
+
+   //update user data
+
+   //forward to index.html
+   res.sendFile(path.join(__dirname+'/index.html'));
 })
 
 
