@@ -1044,9 +1044,26 @@ var App = {
 	}
 }
 
-//TO-DO 
+//TO-DO
+
+///////PARAMETERS 
+// ref 		Firebase database reference or App.Firebase.ref("directory") 
+//			Nandito rin yung user ID ng pag uupdate-an
+//
+// data 	Data to update in json format
+//			Sample json format
+// 			{
+// 				score: 0,
+// 				web/firebase/cloud/android/vr: 0,
+// 				codelabs: {
+// 					{{codelab-key}}: {
+// 						cA: 0,
+// 						end_quiz: 0,
+// 						score: 0
+// 					}
+// 				}
+// 			}
 function submitScore(ref, data) {
-  
 	//get all score details to submit including userid
 
 	//ref.update(data, function())
@@ -1059,6 +1076,8 @@ function submitScore(ref, data) {
 	for(var x in codelabsData)
 		key = x;
 	delete data.codelabs;
+
+	// Need 2 updates
 	ref.update(data, function() {
 		ref.child("codelabs/"+key).update(codelabsData[key], function() {
 			App.User.codelab = key;
