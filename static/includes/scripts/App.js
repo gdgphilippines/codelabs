@@ -574,7 +574,7 @@ var App = {
 						var cA = updateData.codelabs[key].cA;
 						var start_quiz = ucdata.val()["start_quiz"];
 						updateData.codelabs[key].end_quiz = ((end_quiz != false) ? App.Codelabs.end_quiz-App.Codelabs.remaining : App.Codelabs.end_quiz);
-						var time_spent = (updateData.codelabs[key].end_quiz - start_quiz > 300) ? 300 : updateData.codelabs[key].end_quiz - start_quiz;
+						var time_spent = (updateData.codelabs[key].end_quiz - start_quiz - 1 > 300) ? 300 : updateData.codelabs[key].end_quiz - start_quiz - 1;
 						updateData.codelabs[key].score = Math.ceil((((300 - time_spent)/300)*((50)*(updateData.codelabs[key].cA/5)))+(((updateData.codelabs[key].cA*20)/100)*50));
 						updateData.score = udata.val().score + ((updateData.codelabs[key].score >= 0) ? updateData.codelabs[key].score : 0);
 						updateData[data.val().tech] = udata.val()[data.val().tech] + ((updateData.codelabs[key].score >= 0) ? updateData.codelabs[key].score : 0);
