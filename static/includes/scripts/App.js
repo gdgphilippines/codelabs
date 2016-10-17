@@ -123,11 +123,9 @@ var App = {
 				success: function(json) {
 					var userQuestionsRef = App.Firebase.ref("users/"+App.User.loggedIn.uid+"/codelabs/"+App.User.codelab+"/questions");
 					App.Firebase.ref("codelabs/"+App.User.codelab+"/questions").once("value", function(value) {
-						console.log(value.val());
 						var questionList = [];
 						for(var v in value.val())
 							questionList.push(v);
-						console.log(questionList);
 						var done = 0;
 						for(var i = 10; i >= 6; i--) {
 							var rand = Math.floor(Math.random() * i);
@@ -137,7 +135,6 @@ var App = {
 							}, function() {
 								done++;
 							});
-							console.log(questionList[rand]);
 							questionList.splice(rand, 1);
 						}
 						var checkifdone = setInterval(function() {
@@ -169,17 +166,15 @@ var App = {
 					var uS = userdata.val().score;
 					var gtech = data.val().tech;
 					var gscore = userdata.val()[gtech];
-					userRef.update({
+					var updates = {
 						"score": uS - clS
-					}, function() {
-						var updates = {};
-						updates[gtech] = gscore - clS;
-						userRef.update(updates, function() {
-							userRef.child("codelabs/"+App.User.codelab).remove(function() {
-								$("a.codelab-list[data-codelab-id="+App.User.codelab+"]")
-									.removeClass("done fail").addClass("code");
-								App.Process.step1();
-							});
+					};
+					updates[gtech] = gscore - clS;
+					userRef.update(updates, function() {
+						userRef.child("codelabs/"+App.User.codelab).remove(function() {
+							$("a.codelab-list[data-codelab-id="+App.User.codelab+"]")
+								.removeClass("done fail").addClass("code");
+							App.Process.step1();
 						});
 					});
 				});
@@ -229,7 +224,7 @@ var App = {
 		else if(controller != "home" && !(this.User.loggedIn))
 			controller = "home";
 		App.xhr = $.ajax({
-			url: "views/"+controller+".html",
+			url: "static/views/"+controller+".html",
 			cache: true,
 			success: function(html) {
 				$(".view").html("").attr("controller", controller).css("height", "400px").animate({
@@ -279,7 +274,7 @@ var App = {
 		return decodeURIComponent(results[2].replace(/\+/g, " "));
 	},
 	getCodelabImage: function(key) {
-		return "includes/images/codelabs/"+((key.split('-'))[0])+".png";
+		return "static/includes/images/codelabs/"+((key.split('-'))[0])+".png";
 	},
 	Process: {
 		onError: function(xhrtemp, ajaxOptions, thrownError) {
@@ -290,7 +285,7 @@ var App = {
 			App.DialogBox.show();
 			App.DialogBox.disable();
 			$.ajax({
-				url: "views/codelab_1.html",
+				url: "static/views/codelab_1.html",
 				cache: true,
 				success: function(html) {
 					App.Firebase.ref("codelabs/"+App.User.codelab).once("value", function(data) {
@@ -313,10 +308,10 @@ var App = {
 		step2: function() {
 			App.DialogBox.show();
 			App.DialogBox.disable();
-			$(".codelabs a.codelab-list:not([data-codelab-id="+App.User.codelab+"])").attr("data-codelab-status", "disabled");
-			$(".codelabs a.codelab-list[data-codelab-id="+App.User.codelab+"]").attr("data-codelab-status", "enabled");
+			$("#listCodelabs a.codelab-list:not([data-codelab-id="+App.User.codelab+"])").attr("data-codelab-status", "disabled");
+			$("#listCodelabs a.codelab-list[data-codelab-id="+App.User.codelab+"]").attr("data-codelab-status", "enabled");
 			$.ajax({
-				url: "views/codelab_2.html",
+				url: "static/views/codelab_2.html",
 				cache: true,
 				success: function(html) {
 					App.Firebase.ref("codelabs/"+App.User.codelab).once("value", function(data) {
@@ -338,7 +333,7 @@ var App = {
 			App.DialogBox.show();
 			App.DialogBox.disable();
 			$.ajax({
-				url: "views/codelab_3.html",
+				url: "static/views/codelab_3.html",
 				cache: true,
 				success: function(html) {
 					App.Firebase.ref("codelabs/"+App.User.codelab).once("value", function(data) {
@@ -357,7 +352,7 @@ var App = {
 			App.DialogBox.show();
 			App.DialogBox.disable();
 			$.ajax({
-				url: "views/codelab_4.html",
+				url: "static/views/codelab_4.html",
 				cache: false,
 				success: function(html) {
 					App.Firebase.ref("codelabs/"+App.User.codelab).once("value", function(data) {
@@ -377,9 +372,9 @@ var App = {
 		step5: function() {
 			App.DialogBox.show();
 			App.DialogBox.disable();
-			$(".codelabs a.codelab-list").attr("data-codelab-status", "enabled");
+			$("#listCodelabs a.codelab-list").attr("data-codelab-status", "enabled");
 			$.ajax({
-				url: "views/codelab_5.html",
+				url: "static/views/codelab_5.html",
 				cache: true,
 				success: function(html) {
 					App.Firebase.ref("codelabs/"+App.User.codelab).once("value", function(data) {
@@ -469,8 +464,8 @@ var App = {
 				"end_time": App.Codelabs.end_time
 			}, function() {
 				App.User.codelab = key;
-				$(".codelabs [data-codelab-id="+key+"]").removeClass("code").addClass("quiz");
-				$(".codelabs [data-codelab-id="+key+"] div:last-child").html('<i class="material-icons"></i>');
+				$("#listCodelabs [data-codelab-id="+key+"]").removeClass("code").addClass("quiz");
+				$("#listCodelabs [data-codelab-id="+key+"] div:last-child").html('<i class="material-icons"></i>');
 				App.Process.step3();
 			});
 		},
@@ -499,7 +494,6 @@ var App = {
 						answerList.push(snapshot.val()[v].answer);
 					}
 					App.Firebase.ref("codelabs/"+key+"/questions").once("value", function(cQ) {
-						console.log(cQ);
 						$parent = $(".dialog-box .quiz");
 						$template = $parent.children(".row:first-child");
 						$parent.html("");
@@ -509,7 +503,6 @@ var App = {
 							$last.attr("data-question-id", qIDList[index]);
 							$last.find(".question-number").html(index+1);
 							$last.find(".question").html(cQ.val()[qid].question);
-							console.log(cQ.val()[qid].question);
 							var choices = cQ.val()[qid].choices.split(App.Codelabs.Quiz.CHOICES_SEPARATOR);
 							for(var i = 4; i >= 1; i--) {
 								var rand = Math.floor(Math.random() * i);
@@ -563,42 +556,29 @@ var App = {
 				var userRef = App.Firebase.ref("users/"+App.User.loggedIn.uid);
 				App.Firebase.ref("codelabs/"+key).once("value", function(data) {
 					userRef.once("value", function(udata) {
+						var updateData = {
+							score: 0,
+							codelabs: {}
+						}
 						var ucdata = udata.child("codelabs/"+key);
 						var cQ = data.child("questions");
-						var cA = 0;
+						updateData.codelabs[key] = {
+							cA: 0,
+							score: 0,
+							end_quiz: 0
+						};
 						for(var q in ucdata.val().questions) {
 							if(cQ.val()[ucdata.val().questions[q].question].choices.split(App.Codelabs.Quiz.CHOICES_SEPARATOR)[0] == ucdata.val().questions[q].answer)
-								cA++;
+								updateData.codelabs[key].cA++;
 						}
+						var cA = updateData.codelabs[key].cA;
 						var start_quiz = ucdata.val()["start_quiz"];
-						end_quiz = ((end_quiz != false) ? App.Codelabs.end_quiz-App.Codelabs.remaining : App.Codelabs.end_quiz);
-						var time_spent = end_quiz - start_quiz;
-						var score = Math.ceil((((300 - time_spent)/300)*50)+((cA*20)/100)*50);
-						var gtech = data.val().tech;
-						userRef.update({
-							"score": udata.val().score + ((score >= 0) ? score : 0)
-						}, function() {
-							userRef.child("codelabs/"+key).update({
-								"end_quiz": end_quiz,
-								"cA": cA,
-								"score": ((score >= 0) ? score : 0)
-							}, function() {
-								var updates = {};
-								updates[gtech] = udata.val()[gtech] + ((score >= 0) ? score : 0);
-								userRef.update(updates, function() {
-									App.User.codelab = key;
-									$(".codelabs [data-codelab-id="+key+"]").removeClass("quiz code")
-									if(cA > 3)
-										$(".codelabs [data-codelab-id="+key+"]").addClass("done");
-									else
-										$(".codelabs [data-codelab-id="+key+"]").addClass("fail");
-									$(".codelabs [data-codelab-id="+key+"] div:last-child").html('<i class="material-icons"></i>');
-									$(".codelabs a.codelab-list").attr("data-codelab-status", "enabled");
-									App.User.listCodelabs();
-									App.Process.step5();
-								});
-							});	
-						});
+						updateData.codelabs[key].end_quiz = ((end_quiz != false) ? App.Codelabs.end_quiz-App.Codelabs.remaining : App.Codelabs.end_quiz);
+						var time_spent = (updateData.codelabs[key].end_quiz - start_quiz > 300) ? 300 : updateData.codelabs[key].end_quiz - start_quiz;
+						updateData.codelabs[key].score = Math.ceil((((300 - time_spent)/300)*((50)*(updateData.codelabs[key].cA/5)))+(((updateData.codelabs[key].cA*20)/100)*50));
+						updateData.score = udata.val().score + ((updateData.codelabs[key].score >= 0) ? updateData.codelabs[key].score : 0);
+						updateData[data.val().tech] = udata.val()[data.val().tech] + ((updateData.codelabs[key].score >= 0) ? updateData.codelabs[key].score : 0);
+						submitScore(userRef, updateData);
 					});
 				});
 			}
@@ -607,6 +587,36 @@ var App = {
 	User: {
 		codelab: "",
 		loggedIn: 0,
+		checkScore: function() {
+			App.Firebase.ref("users/"+App.User.loggedIn.uid).once("value", function(user) {
+				var local = {
+					score: 0,
+					firebase: 0,
+					web: 0,
+					android: 0,
+					cloud: 0,
+					vr: 0
+				}
+				var techs = ["android", "cloud", "firebase", "vr", "web"];
+				App.Firebase.ref("codelabs").once("value", function(codelab) {
+					$.each(user.val().codelabs, function(key, data) {
+						if(data.hasOwnProperty("score")) {
+							local[codelab.val()[key].tech] += data.score;
+							local.score += data.score;
+						}
+					});
+					var update = false;
+					$.each(techs, function(key, data) {
+						if(user.val()[data] != local[data])
+							update = true;
+					})
+					if(user.val().score != local.score)
+						update = true;
+					if(update) 
+						App.Firebase.ref("users/"+App.User.loggedIn.uid).update(local);
+				})
+			})
+		},
 		register: function(user) {
 			App.Firebase.ref("users/"+user.uid).once("value", function(data) {
 				if(!data.child("displayName").exists()) {
@@ -625,6 +635,7 @@ var App = {
 			});
 		},
 		updatePoints: function() {
+			this.checkScore();
 			App.Firebase.ref("users/"+this.loggedIn.uid).on("value", function(data) {
 				$("#pointMsg").hide();
 				if(data.val().score == 0)
@@ -679,24 +690,24 @@ var App = {
 					'</a>',
 		listCodelabs: function() {
 			var i = 1;
-			$parent = $(".codelabs");
+			var parent = $("#listCodelabs");
 			$disabled = false;
-			$parent.html("");
+			parent.html("");
 			App.Firebase.ref("users/"+App.User.loggedIn.uid).once("value", function(data) {
 				App.Firebase.ref("codelabs/").once("value", function(codelabs) {
 					var list = [];
 					for(var codelab in codelabs.val())
 						list.push(codelab);
 					$.each(list, function(key, datax) {
-						$parent.append(App.User.CODELAB_TEMPLATE);
-						$last = $(".codelabs .codelab-list:last-child");
+						parent.append(App.User.CODELAB_TEMPLATE);
+						$last = $("#listCodelabs .codelab-list:last-child");
 						$last.find("img").attr("src", App.getCodelabImage(datax));
 						$last.find("span.title").html(codelabs.val()[datax].desc);
 						$last.attr("data-codelab-id", datax);
-						$codelab = $parent.find(".codelab-list[data-codelab-id="+datax+"]");
+						$codelab = parent.find(".codelab-list[data-codelab-id="+datax+"]");
 						function disableCodelab(datax) {
-							$(".codelabs a.codelab-list:not([data-codelab-id="+datax+"])").attr("data-codelab-status", "disabled");
-							$(".codelabs a.codelab-list[data-codelab-id="+datax+"]").attr("data-codelab-status", "enabled");
+							$("#listCodelabs a.codelab-list:not([data-codelab-id="+datax+"])").attr("data-codelab-status", "disabled");
+							$("#listCodelabs a.codelab-list[data-codelab-id="+datax+"]").attr("data-codelab-status", "enabled");
 						}
 						if(data.child("codelabs/"+datax+"/end_quiz").exists()) {
 							$codelab.removeClass("code quiz");
@@ -1034,14 +1045,34 @@ var App = {
 }
 
 //TO-DO 
-function submitScore() {
+function submitScore(ref, data) {
   
 	//get all score details to submit including userid
+
+	//ref.update(data, function())
 
 	//create a post data 
 
 	//submit post data to server (server.js)
-
-
+	var codelabsData = data.codelabs;
+	var key = "";
+	for(var x in codelabsData)
+		key = x;
+	delete data.codelabs;
+	ref.update(data, function() {
+		ref.child("codelabs/"+key).update(codelabsData[key], function() {
+			App.User.codelab = key;
+				$("#listCodelabs [data-codelab-id="+key+"]").html("");
+			$("#listCodelabs [data-codelab-id="+key+"]").removeClass("quiz code")
+			if(codelabsData[key].cA > 3)
+				$("#listCodelabs [data-codelab-id="+key+"]").addClass("done");
+			else
+				$("#listCodelabs [data-codelab-id="+key+"]").addClass("fail");
+			$("#listCodelabs [data-codelab-id="+key+"] div:last-child").html('<i class="material-icons"></i>');
+			$("#listCodelabs a.codelab-list").attr("data-codelab-status", "enabled");
+			App.User.listCodelabs();
+			App.Process.step5();
+		});
+	});
 
 }
